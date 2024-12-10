@@ -1,4 +1,7 @@
 from huggingface_hub import HfApi
+import argparse
+import csv
+import os
 
 def aggregate_model_candidates(search_params):
     """
@@ -78,97 +81,104 @@ def is_gcp_compatible(model_info):
     return False
 
 
-# Example usage:
-search_params = [
-    {
-        "sort": "trendingScore",
-        "limit": 10,
-        "direction": -1
-    },
-    {
-        "sort": "likes",
-        "limit": 10,
-        "direction": -1
-    },
-    {
-        "sort": "trendingScore",
-        "limit": 10,
-        "direction": -1,
-        "tags": "text-generation-inference"
-    },
-    {
-        "sort": "likes",
-        "limit": 10,
-        "direction": -1,
-        "tags": "text-generation-inference"
-    },
-    {
-        "sort": "likes",
-        "limit": 10,
-        "direction": -1,
-        "tags": "text-embeddings-inference"
-    },
-    {
-        "sort": "trendingScore",
-        "limit": 10,
-        "direction": -1,
-        "tags": "text-embeddings-inference"
-    },
-    {
-        "sort": "likes",
-        "limit": 10,
-        "direction": -1,
-        "task": "text-classification"
-    },
-    {
-        "sort": "trendingScore",
-        "limit": 10,
-        "direction": -1,
-        "task": "text-classification"
-    },
-    {
-        "sort": "likes",
-        "limit": 10,
-        "direction": -1,
-        "task": "text-to-image"
-    },
-    {
-        "sort": "trendingScore",
-        "limit": 10,
-        "direction": -1,
-        "task": "text-to-image"
-    },
-    {
-        "sort": "likes",
-        "limit": 10,
-        "direction": -1,
-        "task": "text-image-to-image"
-    },
-    {
-        "sort": "trendingScore",
-        "limit": 10,
-        "direction": -1,
-        "task": "text-image-to-image"
-    }
-]   
+def main(output_path):
+    search_params = [
+        {
+            "sort": "trendingScore",
+            "limit": 10,
+            "direction": -1
+        },
+        {
+            "sort": "likes",
+            "limit": 10,
+            "direction": -1
+        },
+        {
+            "sort": "trendingScore",
+            "limit": 10,
+            "direction": -1,
+            "tags": "text-generation-inference"
+        },
+        {
+            "sort": "likes",
+            "limit": 10,
+            "direction": -1,
+            "tags": "text-generation-inference"
+        },
+        {
+            "sort": "likes",
+            "limit": 10,
+            "direction": -1,
+            "tags": "text-embeddings-inference"
+        },
+        {
+            "sort": "trendingScore",
+            "limit": 10,
+            "direction": -1,
+            "tags": "text-embeddings-inference"
+        },
+        {
+            "sort": "likes",
+            "limit": 10,
+            "direction": -1,
+            "task": "text-classification"
+        },
+        {
+            "sort": "trendingScore",
+            "limit": 10,
+            "direction": -1,
+            "task": "text-classification"
+        },
+        {
+            "sort": "likes",
+            "limit": 10,
+            "direction": -1,
+            "task": "text-to-image"
+        },
+        {
+            "sort": "trendingScore",
+            "limit": 10,
+            "direction": -1,
+            "task": "text-to-image"
+        },
+        {
+            "sort": "likes",
+            "limit": 10,
+            "direction": -1,
+            "task": "text-image-to-image"
+        },
+        {
+            "sort": "trendingScore",
+            "limit": 10,
+            "direction": -1,
+            "task": "text-image-to-image"
+        }
+    ]   
 
-import csv
+    combined_models = aggregate_model_candidates(search_params=search_params)
 
-combined_models = aggregate_model_candidates(search_params=search_params)
+    # Prepare data for CSV
+    csv_data = []
+    for model in combined_models:
+        gcp_compatible = is_gcp_compatible(model)
+        csv_data.append({'model_id': model.id, 'library_name': model.library_name, 'task': model.pipeline_tag, 'gcp_compatible': gcp_compatible})
 
-# Prepare data for CSV
-csv_data = []
-for model in combined_models:
-    gcp_compatible = is_gcp_compatible(model)
-    csv_data.append({'model_id': model.id, 'gcp_compatible': gcp_compatible})
+    # Write to CSV file
+    with open(output_path, mode='w', newline='') as csv_file:
+        fieldnames = ['model_id', 'library_name', 'task', 'gcp_compatible']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
-# Write to CSV file
-with open('gcp_compatible_models.csv', mode='w', newline='') as csv_file:
-    fieldnames = ['model_id', 'gcp_compatible']
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in csv_data:
+            writer.writerow(row)
 
-    writer.writeheader()
-    for row in csv_data:
-        writer.writerow(row)
+    print(f"CSV file '{output_path}' created with {len(csv_data)} entries.")
 
-print(f"CSV file 'gcp_compatible_models.csv' created with {len(csv_data)} entries.")
+# Add this block to handle command-line execution
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generate a CSV of GCP compatible models.')
+    default_output_path = os.path.join(os.getcwd(), 'gcp_compatible_models.csv')  # Set default path
+    parser.add_argument('output_path', type=str, nargs='?', default=default_output_path, help='Path to save the output CSV file (default: current directory + gcp_compatible_models.csv)')
+    args = parser.parse_args()
+    
+    main(args.output_path)
