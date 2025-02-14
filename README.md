@@ -2,12 +2,20 @@
 
 A configurable tool to aggregate and filter model candidates from Hugging Face Hub based on cloud provider compatibility and various search scenarios.
 
+## TODO
+1. Refactor to input a yaml to main.py instead of the actual nonsense
+2. Work on a generic important_models.yaml search scenario for which we want to have CSP support / great doc
+3. Work on a generic recommended_models.yaml to provide recommendations to CSP on their curated catalogs.
+4. Add a component that can pull best models from leaderboards
+5. Add a component that can pull from Merve's collections
+6. Double check GCP compatibility and add AWS compatibility
+7. Extract license from tags and add in the search results
+8. Review README
+
 ## Features
 
 1. **Provider-specific Model Selection**
-   - Support for multiple cloud providers (GCP, AWS)
-   - Provider-specific compatibility checks
-   - Consolidated output file with provider compatibility
+   - Support for multiple cloud providers compatibility checks (GCP, AWS)
 
 2. **Flexible Search Scenarios**
    - Trending models (sorted by trending score)
