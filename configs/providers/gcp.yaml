@@ -1,0 +1,29 @@
+name: "GCP"
+compatibility:
+  # Inference tags for direct compatibility
+  inference_tags:
+    - "text-generation-inference"
+    - "text-embeddings-inference"
+  
+  # Transformers library compatible pipelines
+  transformers_pipelines:
+    - "text-classification"
+    - "token-classification"
+    - "fill-mask"
+    - "question-answering"
+  
+  # Diffusers library compatible pipelines
+  diffusers_pipelines:
+    - "diffusers:FluxPipeline"
+    - "diffusers:IFPipeline"
+    - "diffusers:KandinskyPipeline"
+    - "diffusers:KandinskyV22Pipeline"
+    - "diffusers:StableDiffusionControlNetPipeline"
+    - "diffusers:StableDiffusionPipeline"
+    - "diffusers:StableDiffusionXLPipeline"
+  
+  # Keep these for potential future use
+  tasks:
+    - "text-classification"
+    - "text-to-image"
+    - "text-image-to-image" 

@@ -1,0 +1,35 @@
+default_limit: 10
+scenarios:
+  trending:
+    sort: "trendingScore"
+    direction: -1
+  most_used:
+    sort: "downloads"
+    direction: -1
+  finance:
+    sort: "downloads"
+    direction: -1
+    tasks:
+      - "text-classification"
+      - "text-generation"
+    tags:
+      - "finance"
+      - "fintech"
+  healthcare:
+    sort: "downloads"
+    direction: -1
+    tasks:
+      - "text-classification"
+      - "named-entity-recognition"
+    tags:
+      - "healthcare"
+      - "medical"
+  retail:
+    sort: "downloads"
+    direction: -1
+    tasks:
+      - "text-classification"
+      - "sentiment-analysis"
+    tags:
+      - "retail"
+      - "e-commerce"
