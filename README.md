@@ -1,6 +1,6 @@
-# Model Selection Tool
+# Hub Model Search
 
-A configurable tool to aggregate and filter model candidates from Hugging Face Hub based on cloud provider compatibility and various search scenarios.
+Aggregate and filter models from Hugging Face Hub based on a search scenario.
 
 ## TODO
 1. Refactor to input a yaml to main.py instead of the actual nonsense
