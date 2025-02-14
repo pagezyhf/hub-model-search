@@ -29,7 +29,6 @@ class ModelAggregator:
         if output_file.exists():
             existing_df = pd.read_csv(output_file)
             df = pd.concat([existing_df, df], ignore_index=True)
-            # Remove duplicates based on model ID
-            df = df.drop_duplicates(subset=['id'], keep='last')
+            df = df.drop_duplicates(subset=['modelId'], keep='last')
             
         df.to_csv(output_file, index=False) 

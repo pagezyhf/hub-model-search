@@ -6,7 +6,6 @@ class Config:
     def __init__(self, config_dir: str = "configs"):
         self.config_dir = Path(config_dir)
         self.scenarios = self._load_yaml("search_scenarios.yaml")
-        self.industries = self._load_yaml("industries.yaml")
         self.providers = self._load_providers()
 
     def _load_yaml(self, filename: str) -> Dict[str, Any]:
@@ -25,7 +24,8 @@ class Config:
         return self.providers.get(provider, {})
 
     def get_scenario_config(self, scenario: str) -> Dict[str, Any]:
+        # If scenario is "all", return all scenarios
+        if scenario == "all":
+            return self.scenarios.get("scenarios", {})
+            
         return self.scenarios.get("scenarios", {}).get(scenario, {})
-
-    def get_industry_config(self, industry: str) -> Dict[str, Any]:
-        return self.industries.get("industries", {}).get(industry, {}) 

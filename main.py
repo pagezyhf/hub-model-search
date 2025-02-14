@@ -9,12 +9,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Model Selection Tool")
     parser.add_argument("--provider", type=str, default="gcp,aws",
                       help="Comma-separated list of providers (gcp,aws)")
-    parser.add_argument("--scenario", type=str, default="trending",
-                      help="Search scenario (trending,most_used,overall)")
-    parser.add_argument("--industry", type=str,
-                      help="Industry vertical (finance,healthcare,retail)")
-    parser.add_argument("--limit", type=int, default=10,
-                      help="Number of models to retrieve")
+    parser.add_argument("--scenario", type=str, default="all",
+                      help="Search scenario (trending,most_used,overall,finance,healthcare,retail,all)")
+    parser.add_argument("--limit", type=int,
+                      help="Number of models to retrieve (default: from config)")
     return parser.parse_args()
 
 def main():
@@ -39,7 +37,6 @@ def main():
         for scenario in scenarios:
             models = searcher.search_models(
                 scenario=scenario,
-                industry=args.industry,
                 limit=args.limit
             )
             all_models.extend(models)

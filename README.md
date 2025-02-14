@@ -7,14 +7,15 @@ A configurable tool to aggregate and filter model candidates from Hugging Face H
 1. **Provider-specific Model Selection**
    - Support for multiple cloud providers (GCP, AWS)
    - Provider-specific compatibility checks
-   - Separate output files for each provider
+   - Consolidated output file with provider compatibility
 
 2. **Flexible Search Scenarios**
-   - Trending models
-   - Most used models
-   - Overall rankings
-   - Task-specific searches
-   - Industry vertical filtering
+   - Trending models (sorted by trending score)
+   - Most used models (sorted by downloads)
+   - Industry-specific scenarios with customized tasks and tags:
+     - Finance
+     - Healthcare
+     - Retail
 
 3. **Configurable Architecture**
    - YAML-based configuration
@@ -27,34 +28,50 @@ A configurable tool to aggregate and filter model candidates from Hugging Face H
 ```bash
 git clone [repository-url]
 ```
+
 2. Install dependencies:
 ```bash
-pip install huggingface-hub pyyaml pandas
+pip install -r requirements.txt
 ```
+
+Required dependencies:
+- huggingface-hub: For accessing the Hugging Face model hub
+- pyyaml: For configuration file parsing
+- pandas: For data processing and CSV output
 
 ## Configuration
 
 The tool uses YAML configuration files located in the `configs/` directory:
 
-- `search_scenarios.yaml`: Define search scenarios and default parameters
+- `search_scenarios.yaml`: Define search scenarios with their parameters
 - `providers/`: Provider-specific compatibility rules
   - `gcp.yaml`: Google Cloud Platform configuration
   - `aws.yaml`: Amazon Web Services configuration
-- `industries.yaml`: Industry vertical configurations and filters
 
-### Customizing Configurations
+### Search Scenarios Configuration
 
-1. **Search Scenarios**
-   - Modify `configs/search_scenarios.yaml` to adjust search parameters
-   - Configure sorting criteria and default limits
+Each scenario in `search_scenarios.yaml` requires:
+- `sort`: Field to sort results by (e.g., "downloads", "trendingScore")
+- `direction`: Sort direction (-1 for descending, 1 for ascending)
 
-2. **Provider Compatibility**
-   - Update provider YAML files in `configs/providers/`
-   - Define compatible tags, tasks, and pipelines
+Optional parameters:
+- `tasks`: List of Hugging Face tasks to search for
+- `tags`: List of tags to filter models
 
-3. **Industry Verticals**
-   - Edit `configs/industries.yaml` to define industry-specific filters
-   - Configure relevant tasks and use cases
+Example scenario configuration:
+```yaml
+finance:
+  sort: "downloads"
+  direction: -1
+  tasks:
+    - "text-classification"
+    - "text-generation"
+  tags:
+    - "finance"
+    - "fintech"
+```
+
+When both tasks and tags are specified, the tool performs searches for each combination of task and tag.
 
 ## Usage
 
@@ -67,9 +84,8 @@ python main.py --provider gcp,aws --scenario trending --limit 10
 ### Command Line Arguments
 
 - `--provider`: Comma-separated list of providers (gcp,aws)
-- `--scenario`: Search scenario (trending,most_used,overall)
-- `--industry`: Industry vertical (finance,healthcare,retail)
-- `--limit`: Number of models to retrieve (default: 10)
+- `--scenario`: Search scenario name or "all" for all scenarios (default: "all")
+- `--limit`: Optional number of models to retrieve per search (default from config)
 
 ### Examples
 
@@ -78,33 +94,28 @@ python main.py --provider gcp,aws --scenario trending --limit 10
 python main.py --provider gcp --scenario trending
 ```
 
-2. Get most used models for AWS in finance:
+2. Get finance-specific models for AWS:
 ```bash
-python main.py --provider aws --scenario most_used --industry finance
+python main.py --provider aws --scenario finance
 ```
 
-3. Combined search across providers:
+3. Run all scenarios across providers:
 ```bash
-python main.py --provider gcp,aws --scenario trending,most_used --limit 20
+python main.py --provider gcp,aws
 ```
 
 ## Output
 
-The tool generates CSV files in the `output/` directory:
-- `gcp_models.csv`: Models compatible with Google Cloud Platform
-- `aws_models.csv`: Models compatible with Amazon Web Services
-
-Each CSV file contains:
+The tool generates a consolidated CSV file in the `output/` directory with:
 - Model ID
-- Provider Compatibility
-- Trending Score
+- Provider Compatibility (for each provider)
 - Downloads
 - Likes
 - Tags
-- Tasks
-- License
+- Task
+- Search Parameters Used (task and tag that found the model)
 - Pipeline Compatibility
-- Industry Relevance (if applicable)
+- Library Name
 
 ## Contributing
 
@@ -113,7 +124,3 @@ Each CSV file contains:
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
-
-## License
-
-[Add your license information here]
