@@ -1,0 +1,19 @@
+name: "AWS"
+compatibility:
+  # Inference tags for direct compatibility
+  inference_tags:
+    - "text-generation-inference"
+    - "text-embeddings-inference"
+  
+  # Transformers library compatible pipelines
+  transformers_pipelines:
+    - "text-classification"
+    - "text-generation"
+  
+  # Diffusers library compatible pipelines
+  diffusers_pipelines: []  # placeholder for AWS diffusers support
+  
+  # Keep these for potential future use
+  tasks:
+    - "text-classification"
+    - "text-generation" 

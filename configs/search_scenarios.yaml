@@ -1,0 +1,12 @@
+default_limit: 10
+scenarios:
+  trending:
+    sort: "trendingScore"
+    direction: -1
+  most_used:
+    sort: "downloads"
+    direction: -1
+  overall:
+    categories:
+      - trending
+      - most_used 
