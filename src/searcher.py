@@ -60,6 +60,7 @@ class ModelSearcher:
                         'tags': model.tags,
                         'pipeline_tag': model.pipeline_tag,
                         'library_name': model.library_name,
+                        'license': [tag for tag in model.tags if tag.startswith("license:")],
                         'downloads': model.downloads,
                         'likes': model.likes,
                         'search_task': task,

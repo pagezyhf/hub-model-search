@@ -5,9 +5,9 @@ Aggregate models from Hugging Face Hub based on a search scenarios.
 ## TODO
 2. Work on a generic important_models.yaml search scenario for which we want to have CSP support / great doc
 3. Work on a generic recommended_models.yaml to provide recommendations to CSP on their curated catalogs.
-4. Add a component that can pull best models from leaderboards
-5. Add a component that can pull from Merve's collections
-6. Double check GCP compatibility and add AWS compatibility
+4. Add a component that can pull best models from leaderboards (doesn't seem to be programmatic access)
+5. Add a component that can list Merve's collections using HfApi
+6. Add AWS compatibility
 7. Extract license from tags and add in the search results
 8. Review README
 
