@@ -1,42 +1,46 @@
 from typing import Dict, Any
 
+
+		(model.library_name === "transformers" &&
+			(!model.tags.includes(TAG_CUSTOM_CODE) || model.tags.includes(TAG_TEXT_GENERATION_INFERENCE))) ||
+		(model.library_name === "diffusers" &&
+			model.pipeline_tag === "text-to-image" &&
+			model.config?.diffusers?._class_name &&
+			typedInclude(SUPPORTED_DIFFUSERS_PIPELINES, model.config.diffusers._class_name)) ||
+
+
 class AWSProvider:
     def __init__(self, config: Dict[str, Any]):
+        self.name = "aws"
         self.config = config
-        self.name = config.get("name", "gcp").lower()
-        
         compatibility = config.get("compatibility", {})
         
         # Get configurations from yaml
-        self.inference_tags = compatibility.get("inference_tags", [
-            "text-generation-inference",
-            "text-embeddings-inference"
-        ])
-        
-        self.transformers_compatible_pipelines = compatibility.get("transformers_pipelines", [
-            "text-classification",
-            "token-classification", 
-            "fill-mask",
-            "question-answering"
-        ])
-        
-        self.diffusers_compatible_pipelines = compatibility.get("diffusers_pipelines", [
-            "diffusers:FluxPipeline",
-            "diffusers:IFPipeline", 
-            "diffusers:KandinskyPipeline",
-            "diffusers:KandinskyV22Pipeline",
-            "diffusers:StableDiffusionControlNetPipeline",
-            "diffusers:StableDiffusionPipeline",
-            "diffusers:StableDiffusionXLPipeline"
-        ])
+        self.inference_tags = compatibility.get("inference_tags")
+        self.transformers_compatible_pipelines = compatibility.get("transformers_pipelines")
+        self.diffusers_compatible_pipelines = compatibility.get("diffusers_pipelines")
 
     def check_compatibility(self, model_info: Dict[str, Any]) -> bool:
-        # Check tags
-        if not self.check_tags(model_info.get("tags", [])):
-            return False
+        # Check for inference tags
+        if any(tag in (model_info.get('tags') or []) for tag in self.inference_tags):
+            return True
 
-        # Check tasks
-        if not self.check_tasks(model_info.get("tasks", [])):
-            return False
+        # Check no custom code in transformers tags
+        has_transformers = "transformers" in (model_info.get('library_name') or [])
+        has_custom_code = "custom_code" in (model_info.get('tags') or [])
 
-        return True 
+        if has_transformers and not has_custom_code:
+            return True
+
+        # Check for diffusers library with text-to-image task and specific pipelines
+        has_diffusers = "diffusers" in (model_info.get('library_name') or [])
+        has_text_to_image_task = "text-to-image" in (model_info.get('pipeline_tag') or [])
+        has_compatible_diffusers_pipeline = any(
+            tag in (model_info.get('tags') or []) 
+            for tag in self.diffusers_compatible_pipelines
+        )
+        
+        if has_diffusers and has_text_to_image_task and has_compatible_diffusers_pipeline:
+            return True
+
+        return False 

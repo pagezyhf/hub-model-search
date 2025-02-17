@@ -1,4 +1,3 @@
-name: "GCP"
 compatibility:
   # Inference tags for direct compatibility
   inference_tags:
@@ -22,8 +21,6 @@ compatibility:
     - "diffusers:StableDiffusionPipeline"
     - "diffusers:StableDiffusionXLPipeline"
   
-  # Keep these for potential future use
-  tasks:
-    - "text-classification"
+  # Diffusers library compatible tasks
+  diffusers_tasks:
     - "text-to-image"
-    - "text-image-to-image" 
