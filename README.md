@@ -1,9 +1,8 @@
 # Hub Model Search
 
-Aggregate and filter models from Hugging Face Hub based on a search scenario.
+Aggregate models from Hugging Face Hub based on a search scenarios.
 
 ## TODO
-1. Refactor to input a yaml to main.py instead of the actual nonsense
 2. Work on a generic important_models.yaml search scenario for which we want to have CSP support / great doc
 3. Work on a generic recommended_models.yaml to provide recommendations to CSP on their curated catalogs.
 4. Add a component that can pull best models from leaderboards
@@ -18,17 +17,10 @@ Aggregate and filter models from Hugging Face Hub based on a search scenario.
    - Support for multiple cloud providers compatibility checks (GCP, AWS)
 
 2. **Flexible Search Scenarios**
-   - Trending models (sorted by trending score)
-   - Most used models (sorted by downloads)
-   - Industry-specific scenarios with customized tasks and tags:
-     - Finance
-     - Healthcare
-     - Retail
-
-3. **Configurable Architecture**
-   - YAML-based configuration
-   - Extensible provider system
-   - Customizable search parameters
+   - YAML-based configuration for search scenario
+    - configs/important_models.yaml to list models for which we want to have great doc for all our CSP.
+    - configs/recommended_models.yaml to list models which we think should be added to our CSP catalogs.
+    - Create your own.
 
 ## Installation
 
@@ -44,21 +36,20 @@ pip install -r requirements.txt
 
 Required dependencies:
 - huggingface-hub: For accessing the Hugging Face model hub
-- pyyaml: For configuration file parsing
 - pandas: For data processing and CSV output
 
 ## Configuration
 
 The tool uses YAML configuration files located in the `configs/` directory:
 
-- `search_scenarios.yaml`: Define search scenarios with their parameters
+- `search_scenarios.yaml`: example search scenarios
 - `providers/`: Provider-specific compatibility rules
   - `gcp.yaml`: Google Cloud Platform configuration
   - `aws.yaml`: Amazon Web Services configuration
 
 ### Search Scenarios Configuration
 
-Each scenario in `search_scenarios.yaml` requires:
+Each scenario in your scenarios yaml file requires:
 - `sort`: Field to sort results by (e.g., "downloads", "trendingScore")
 - `direction`: Sort direction (-1 for descending, 1 for ascending)
 
@@ -86,30 +77,29 @@ When both tasks and tags are specified, the tool performs searches for each comb
 Basic usage:
 
 ```bash
-python main.py --provider gcp,aws --scenario trending --limit 10
+python main.py --provider gcp,aws --search_scenario_file configs/search_scenario.yaml
 ```
 
 ### Command Line Arguments
 
 - `--provider`: Comma-separated list of providers (gcp,aws)
-- `--scenario`: Search scenario name or "all" for all scenarios (default: "all")
-- `--limit`: Optional number of models to retrieve per search (default from config)
+- `--search_scenario_file`: yaml_file
 
 ### Examples
 
 1. Search trending models for GCP:
 ```bash
-python main.py --provider gcp --scenario trending
+python main.py --provider gcp --search_scenario_file configs/trending.yaml
 ```
 
 2. Get finance-specific models for AWS:
 ```bash
-python main.py --provider aws --scenario finance
+python main.py --provider aws --search_scenario_file configs/finance.yaml
 ```
 
-3. Run all scenarios across providers:
+3. Run a search scenario across providers:
 ```bash
-python main.py --provider gcp,aws
+python main.py --provider gcp,aws --search_scenario_file configs/search_scenario.yaml
 ```
 
 ## Output
@@ -124,6 +114,7 @@ The tool generates a consolidated CSV file in the `output/` directory with:
 - Search Parameters Used (task and tag that found the model)
 - Pipeline Compatibility
 - Library Name
+- Search Scenario
 
 ## Contributing
 

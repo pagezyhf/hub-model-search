@@ -1,4 +1,4 @@
-default_limit: 10
+default_limit: 5
 scenarios:
   trending:
     sort: "trendingScore"

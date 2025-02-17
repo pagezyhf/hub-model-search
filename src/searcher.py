@@ -1,5 +1,8 @@
 from typing import Dict, List, Any, Protocol
 from huggingface_hub import HfApi
+from src.config import SearchConfig
+import pandas as pd
+from pathlib import Path
 
 class Provider(Protocol):
     """Protocol defining the interface for cloud providers"""
@@ -7,40 +10,37 @@ class Provider(Protocol):
     def check_compatibility(self, model_info: Dict[str, Any]) -> bool: ...
 
 class ModelSearcher:
-    def __init__(self, provider: Provider, config: Dict[str, Any]):
+    def __init__(self, provider: Provider, search: SearchConfig, output_dir: str = "output"):
+        self.search = search
         self.provider = provider
-        self.config = config
         self.api = HfApi()
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(exist_ok=True)
 
-    def search_models(self, scenario: str, limit: int = None) -> List[Dict[str, Any]]:
-        scenario_config = self.config.get_scenario_config(scenario)
-        
-        # If scenario is "all", merge results from all scenarios
-        if scenario == "all":
-            all_models = []
-            all_scenarios = self.config.scenarios.get("scenarios", {})
-            # Skip the "all" scenario itself when processing all scenarios
-            for scenario_name, scenario_conf in all_scenarios.items():
-                models = self._search_with_config(scenario_conf, limit)
+    def search_models(self) -> List[Dict[str, Any]]:
+        all_models = []
+
+        for scenario_name, scenario_conf in self.search.scenarios.items():
+                models = self._search_with_config(scenario_name, scenario_conf)
                 all_models.extend(models)
-            return all_models
-            
-        # Single scenario search
-        return self._search_with_config(scenario_config, limit)
+    
+        self.models = all_models
+    
+    def save(self):
+        df = pd.DataFrame(self.models)
+        output_file = self.output_dir / f"{self.provider.name}_model_results.csv"
+        df.to_csv(output_file, index=False)
         
-    def _search_with_config(self, config: Dict[str, Any], limit: int = None) -> List[Dict[str, Any]]:
-        if not config.get("sort") or "direction" not in config:
-            raise ValueError("Scenario must specify 'sort' and 'direction'")
+    def _search_with_config(self, name, scenario_conf: Dict[str, Any]) -> List[Dict[str, Any]]:
             
         base_params = {
-            "limit": limit or self.config.scenarios.get("default_limit", 10),
-            "sort": config["sort"],
-            "direction": config["direction"]
+            "sort": scenario_conf["sort"],
+            "direction": scenario_conf["direction"]
         }
         
         all_models = []
-        tasks = config.get("tasks", [None])
-        tags = config.get("tags", [None])
+        tasks = scenario_conf.get("tasks", [None])
+        tags = scenario_conf.get("tags", [None])
         
         # Do cartesian product of tasks and tags
         for task in tasks:
@@ -51,7 +51,7 @@ class ModelSearcher:
                 if tag:
                     search_params["tags"] = tag
                     
-                models = self.api.list_models(**search_params)
+                models = self.api.list_models(**search_params, limit = self.search.limit)
                 
                 # Add compatibility information
                 for model in models:
@@ -63,7 +63,8 @@ class ModelSearcher:
                         'downloads': model.downloads,
                         'likes': model.likes,
                         'search_task': task,
-                        'search_tag': tag
+                        'search_tag': tag, 
+                        'search_scenario': name
                     }
                     model_info[f"{self.provider.name}_compatible"] = self.provider.check_compatibility(model_info)
                     all_models.append(model_info)
