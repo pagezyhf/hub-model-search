@@ -28,6 +28,9 @@ class ModelSearcher:
     
     def save(self):
         df = pd.DataFrame(self.models)
+        for column in df.columns:
+            df[column] = df[column].apply(lambda x: tuple(x) if isinstance(x, list) else x)
+        df.drop_duplicates(subset='modelId', keep='first', inplace=True) # keep first iteration of duplicates
         output_file = self.output_dir / f"{self.provider.name}_model_results.csv"
         df.to_csv(output_file, index=False)
         

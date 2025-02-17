@@ -1,0 +1,13 @@
+default_limit: 5
+scenarios:
+  healthcare:
+    sort: "downloads"
+    direction: -1
+    tasks:
+      - "text-classification"
+      - "named-entity-recognition"
+      - "text-generation"
+      - "image-classification"
+      - "object-detection"
+    tags:
+      - "healthcare"

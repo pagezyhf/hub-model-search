@@ -9,6 +9,10 @@ PROVIDERS_MAP = {
     'gcp': GCPProvider
 }
 
+def load_yaml(self, filename: str) -> Dict[str, Any]:
+    with open(self.config_dir / filename, 'r') as f:
+        return yaml.safe_load(f)
+
 class SearchConfig:
     def __init__(self, search_scenario: str = "configs/search_scenarios.yaml"):
         self.config_dir = Path(__file__).resolve().parent.parent
@@ -32,16 +36,20 @@ class SearchConfig:
         return self.scenarios.get("scenarios", {})
     
 class ProviderConfig:
-    def __init__(self, provider_name: str = "gcp"):
+    def __init__(self, provider_name: str):
         self.config_dir = Path(__file__).resolve().parent.parent
         self.provider_name = provider_name
         self.providers = self._load_providers()
+
+    def _load_yaml(self, filename: str) -> Dict[str, Any]:
+        with open(self.config_dir / filename, 'r') as f:
+            return yaml.safe_load(f)
     
     def _load_providers(self) -> Dict[str, Any]:
         providers = {}
-        provider_dir = self.config_dir / "providers"
+        provider_dir = self.config_dir / "configs" / "providers"
         for provider_file in provider_dir.glob("*.yaml"):
-            provider_config = self._load_yaml(f"providers/{provider_file.name}")
+            provider_config = self._load_yaml(f"configs/providers/{provider_file.name}")
             providers[provider_file.stem] = provider_config
         return providers
 

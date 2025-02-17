@@ -26,7 +26,7 @@ class GCPProvider:
             
         # Check for diffusers library with text-to-image task and specific pipelines
         has_diffusers = "diffusers" in (model_info.get('library_name') or [])
-        has_compatible_diffusers_task = model_info.get('pipeline_tag') in self.diffusers_compatible_pipelines_compatible_pipelines
+        has_compatible_diffusers_task = model_info.get('pipeline_tag') in self.diffusers_compatible_pipelines
         has_compatible_diffusers_pipeline = any(
             tag in (model_info.get('tags') or []) 
             for tag in self.diffusers_compatible_pipelines

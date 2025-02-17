@@ -1,35 +1,25 @@
-default_limit: 5
+default_limit: 10
 scenarios:
-  trending:
+  all_trending:
     sort: "trendingScore"
     direction: -1
-  most_used:
+  trending_per_task:
+    sort: "trendingScore"
+    direction: -1
+    tasks:
+      - "text-classification"
+      - "text-to-image"
+      - "text-image-to-image"
+      - "text-to-speech"
+  all_most_used:
     sort: "downloads"
     direction: -1
-  finance:
+  most_used_per_task:
     sort: "downloads"
     direction: -1
     tasks:
       - "text-classification"
       - "text-generation"
-    tags:
-      - "finance"
-      - "fintech"
-  healthcare:
-    sort: "downloads"
-    direction: -1
-    tasks:
-      - "text-classification"
-      - "named-entity-recognition"
-    tags:
-      - "healthcare"
-      - "medical"
-  retail:
-    sort: "downloads"
-    direction: -1
-    tasks:
-      - "text-classification"
-      - "sentiment-analysis"
-    tags:
-      - "retail"
-      - "e-commerce"
+      - "text-to-image"
+      - "text-image-to-image"
+      - "text-to-speech"

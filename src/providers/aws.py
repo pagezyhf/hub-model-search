@@ -1,14 +1,5 @@
 from typing import Dict, Any
 
-
-		(model.library_name === "transformers" &&
-			(!model.tags.includes(TAG_CUSTOM_CODE) || model.tags.includes(TAG_TEXT_GENERATION_INFERENCE))) ||
-		(model.library_name === "diffusers" &&
-			model.pipeline_tag === "text-to-image" &&
-			model.config?.diffusers?._class_name &&
-			typedInclude(SUPPORTED_DIFFUSERS_PIPELINES, model.config.diffusers._class_name)) ||
-
-
 class AWSProvider:
     def __init__(self, config: Dict[str, Any]):
         self.name = "aws"
