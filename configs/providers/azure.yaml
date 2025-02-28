@@ -1,0 +1,14 @@
+compatibility:
+  # Inference tags for direct compatibility
+  inference_tags:
+    - "text-generation-inference"
+    - "text-embeddings-inference"
+  
+  # Transformers library compatible pipelines
+  transformers_pipelines:
+  
+  # Diffusers library compatible pipelines
+  diffusers_pipelines:
+  
+  # Diffusers library compatible tasks
+  diffusers_tasks:
