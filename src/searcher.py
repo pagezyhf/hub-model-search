@@ -9,7 +9,7 @@ class ModelSearcher:
     def __init__(self, provider: Provider, search: SearchConfig, output_dir: str = "output"):
         self.search = search
         self.provider = provider
-        self.api = HfApi(token="")
+        self.api = HfApi()
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
 
@@ -56,15 +56,15 @@ class ModelSearcher:
                 for model in models:
                     model_info = {
                         'modelId': model.modelId,
+                        'search_task': task,
+                        'search_tag': tag, 
+                        'search_scenario': name,
+                        'downloads': model.downloads,
+                        'likes': model.likes,
                         'tags': model.tags,
                         'pipeline_tag': model.pipeline_tag,
                         'library_name': model.library_name,
                         'license': [tag for tag in model.tags if tag.startswith("license:")],
-                        'downloads': model.downloads,
-                        'likes': model.likes,
-                        'search_task': task,
-                        'search_tag': tag, 
-                        'search_scenario': name
                     }
                     model_info[f"{self.provider.name}_compatible"] = self.provider.check_compatibility(model_info)
                     all_models.append(model_info)

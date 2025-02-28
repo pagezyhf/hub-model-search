@@ -1,29 +1,14 @@
-default_limit: 10
+default_limit: 40
 scenarios:
-  all_trending:
-    sort: "trendingScore"
-    direction: -1
-  trending_per_task:
-    sort: "trendingScore"
-    direction: -1
-    tasks:
-      - "text-generation"
-      - "text-classification"
-      - "text-to-image"
-      - "text-image-to-image"
-      - "text-to-speech"
-      - "sentence-similarity"
-      - "feature-extraction"
-  all_most_used:
+  most_used_per_inf_solution:
     sort: "downloads"
     direction: -1
-  most_used_per_task:
-    sort: "downloads"
+    tags:
+      - "text-generation-inference"
+      - "text-embeddings-inference"
+  most_trending_per_inf_solution:
+    sort: "trendingScore"
     direction: -1
-    tasks:
-      - "text-generation"
-      - "text-to-image"
-      - "text-image-to-image"
-      - "text-to-speech"
-      - "sentence-similarity"
-      - "feature-extraction"
+    tags:
+      - "text-generation-inference"
+      - "text-embeddings-inference"
