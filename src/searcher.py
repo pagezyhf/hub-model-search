@@ -1,19 +1,15 @@
-from typing import Dict, List, Any, Protocol
+from typing import Dict, List, Any
 from huggingface_hub import HfApi
 from src.config import SearchConfig
+from src.providers import Provider
 import pandas as pd
 from pathlib import Path
-
-class Provider(Protocol):
-    """Protocol defining the interface for cloud providers"""
-    name: str
-    def check_compatibility(self, model_info: Dict[str, Any]) -> bool: ...
 
 class ModelSearcher:
     def __init__(self, provider: Provider, search: SearchConfig, output_dir: str = "output"):
         self.search = search
         self.provider = provider
-        self.api = HfApi()
+        self.api = HfApi(token="")
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
 
