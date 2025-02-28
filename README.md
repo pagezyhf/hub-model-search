@@ -6,15 +6,12 @@ Aggregate models from Hugging Face Hub based on a search scenarios.
 2. Work on a generic important_models.yaml search scenario for which we want to have CSP support / great doc
 3. Work on a generic recommended_models.yaml to provide recommendations to CSP on their curated catalogs.
 4. Add a component that can pull best models from leaderboards (doesn't seem to be programmatic access)
-5. Add a component that can list Merve's collections using HfApi
-6. Add AWS compatibility
-7. Extract license from tags and add in the search results
-8. Review README
+5. Add a component that can list Merve's collections using HfApi (complicated)
 
 ## Features
 
 1. **Provider-specific Model Selection**
-   - Support for multiple cloud providers compatibility checks (GCP, AWS)
+   - Support for multiple cloud providers compatibility checks (GCP, AWS, Azure)
 
 2. **Flexible Search Scenarios**
    - YAML-based configuration for search scenario
@@ -44,8 +41,18 @@ The tool uses YAML configuration files located in the `configs/` directory:
 
 - `search_scenarios.yaml`: example search scenarios
 - `providers/`: Provider-specific compatibility rules
-  - `gcp.yaml`: Google Cloud Platform configuration
-  - `aws.yaml`: Amazon Web Services configuration
+  - `gcp.yaml`: Google Cloud Platform configuration (Deploy to Google Cloud rules)
+  - `aws.yaml`: Amazon Web Services configuration (Deploy to Sagemaker rules)
+  - `azure.yaml`: Microsoft Azure configuration (Azure HF Collection limitations)
+
+## Logic
+
+src:
+- `config.py`: Define the classes used to load the providers and search scenario config files.
+- `providers.py`: Define the classes corresponding to each provider. It is used to define model compatibility rules.
+- `searcher.py`: Define the class used to query the hub for each search query, define model compatibility, and save results.
+
+`main.py` take as input a list of providers, a config file of search scenarios and output the results.
 
 ### Search Scenarios Configuration
 
@@ -77,12 +84,12 @@ When both tasks and tags are specified, the tool performs searches for each comb
 Basic usage:
 
 ```bash
-python main.py --provider gcp,aws --search_scenario_file configs/search_scenario.yaml
+python main.py --provider gcp,aws,azure --search_scenario_file configs/search_scenario.yaml
 ```
 
 ### Command Line Arguments
 
-- `--provider`: Comma-separated list of providers (gcp,aws)
+- `--provider`: Comma-separated list of providers (gcp,aws,azure)
 - `--search_scenario_file`: yaml_file
 
 ### Examples
