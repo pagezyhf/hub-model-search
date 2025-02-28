@@ -1,12 +1,12 @@
 import yaml
 from pathlib import Path
 from typing import Dict, Any
-from src.providers.aws import AWSProvider
-from src.providers.gcp import GCPProvider
+from src.providers import AWSProvider, GCPProvider, AzureProvider
 
 PROVIDERS_MAP = {
     'aws': AWSProvider,
-    'gcp': GCPProvider
+    'gcp': GCPProvider,
+    'azure': AzureProvider
 }
 
 def load_yaml(self, filename: str) -> Dict[str, Any]:
