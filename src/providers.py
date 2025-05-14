@@ -92,8 +92,10 @@ class AzureProvider:
         # flag
         has_custom_code = "custom_code" in (model_info.get('tags') or [])
 
+        is_llama_derivative = "llama" in (model_info.get('tags') or [])
+
         # Check for inference tags and no custom_code
-        if any(tag in (model_info.get('tags') or []) for tag in self.inference_tags) and not has_custom_code:
+        if any(tag in (model_info.get('tags') or []) for tag in self.inference_tags) and not has_custom_code and not is_llama_derivative:
             return True
 
         # Check no custom code in transformers tags

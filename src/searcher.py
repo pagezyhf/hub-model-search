@@ -9,7 +9,7 @@ class ModelSearcher:
     def __init__(self, provider: Provider, search: SearchConfig, output_dir: str = "output"):
         self.search = search
         self.provider = provider
-        self.api = HfApi()
+        self.api = HfApi(token="")
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
 
@@ -34,7 +34,8 @@ class ModelSearcher:
             
         base_params = {
             "sort": scenario_conf["sort"],
-            "direction": scenario_conf["direction"]
+            "direction": scenario_conf["direction"],
+            "filter": scenario_conf.get("filter"),
         }
         
         all_models = []

@@ -12,3 +12,9 @@ scenarios:
     tags:
       - "text-generation-inference"
       - "text-embeddings-inference"
+  qwen:
+    sort: "downloads"
+    direction: -1
+    filter: "qwen/"
+    tags:
+      - "text-generation-inference"

@@ -1,13 +1,18 @@
 default_limit: 5
 scenarios:
-  healthcare:
+  most_used_per_inf_solution:
     sort: "downloads"
     direction: -1
-    tasks:
-      - "text-classification"
-      - "named-entity-recognition"
-      - "text-generation"
-      - "image-classification"
-      - "object-detection"
     tags:
-      - "healthcare"
+      - "text-generation-inference,healthcare"
+      - "text-embeddings-inference,healthcare"
+      - "text-generation-inference,medical"
+      - "text-embeddings-inference,medical"
+  most_trending_per_inf_solution:
+    sort: "trendingScore"
+    direction: -1
+    tags:
+      - "text-generation-inference,healthcare"
+      - "text-embeddings-inference,healthcare"
+      - "text-generation-inference,medical"
+      - "text-embeddings-inference,medical"
